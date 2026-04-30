@@ -1,0 +1,25 @@
+{
+  "entropy": {
+    "entropy_min_fold": 0.65,
+    "entropy_collapse_threshold": 0.35
+  },
+  "hysteresis": {
+    "state_change_cooldown_bars": 3,
+    "confirmation_bars_required": 2,
+    "entry_confidence_min": 0.80,
+    "exit_confidence_max": 0.40
+  },
+  "timeframes": {
+    "primary": "M5",
+    "secondary": ["H1", "H4"]
+  },
+  "global": {
+    "max_spread_points": 25,
+    "cooldown_hours": 4
+  },
+  "symbol_overrides": {
+    "BTCUSD": { "max_spread_points": 50, "cooldown_hours": 2 },
+    "XAUUSD": { "max_spread_points": 40 },
+    "USDJPY": { "enabled": false }
+  }
+}

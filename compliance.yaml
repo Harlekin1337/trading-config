@@ -1,0 +1,23 @@
+max_daily_loss_pct: 0.05
+drawdown_type: trailing
+max_overall_drawdown_pct: 0.10
+best_day_profit_cap_pct: 0.30
+min_trading_days: 10
+news_blackout_before_min: 15
+news_blackout_after_min: 15
+close_on_friday_eod: false
+friday_close_time_utc: "20:55"
+allowed_trading_hours_utc:
+  - "00:00-23:59"
+trading_schedule:
+  enabled: true
+  max_trades_per_day: 5
+  max_trades_per_session: 3
+  sessions:
+    - name: "London+NY Overlap"
+      start_utc: "07:00"
+      end_utc: "21:00"
+      days: ["mon", "tue", "wed", "thu", "fri"]
+autonomy:
+  mode: "supervised"
+  approval_timeout_sec: 120
