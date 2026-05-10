@@ -56,7 +56,7 @@
     },
     "provider": {
       "minimax_enabled": true,
-      "openrouter_enabled": true,
+      "openrouter_enabled": false,
       "timeout_seconds": 10.0
     }
   }
