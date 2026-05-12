@@ -25,7 +25,6 @@
   "mirofish": {
     "enabled": false,
     "phase": 1,
-    "cost_budget_eur": 50.0,
     "assets": {
       "btc": true,
       "eth": true,
