@@ -21,5 +21,42 @@
     "BTCUSD": { "max_spread_points": 50, "cooldown_hours": 2 },
     "XAUUSD": { "max_spread_points": 40 },
     "USDJPY": { "enabled": false }
+  },
+  "mirofish": {
+    "enabled": false,
+    "phase": 1,
+    "assets": {
+      "btc": true,
+      "eth": true,
+      "gold": true,
+      "us30": true,
+      "usd_jpy": false,
+      "eur_usd": false,
+      "other": false
+    },
+    "vibe_check": {
+      "enabled": true,
+      "cron": "0 17 * * *",
+      "forecast_ttl_hours": 4.0,
+      "forecast_horizon": "4h",
+      "outcome_definition": "price closes above +0.6 ATR, below -0.6 ATR, or remains neutral within the forecast horizon",
+      "min_valid_personas": 3
+    },
+    "stress_test": {
+      "enabled": true,
+      "max_per_day": 10
+    },
+    "automated": {
+      "enabled": false,
+      "bayesian_confidence_min": 0.75,
+      "divergence_threshold": 0.7,
+      "veto_weight": 0.3,
+      "entry_confidence_min": 0.80
+    },
+    "provider": {
+      "minimax_enabled": true,
+      "openrouter_enabled": false,
+      "timeout_seconds": 10.0
+    }
   }
 }
