@@ -22,6 +22,19 @@
     "XAUUSD": { "max_spread_points": 40 },
     "USDJPY": { "enabled": false }
   },
+  "regime": {
+    "adx_emerging_min": 20,
+    "adx_established_min": 32,
+    "di_emerging_min": 3,
+    "di_established_min": 15,
+    "aroon_fresh_min": 70,
+    "aroon_opposite_max": 35,
+    "aroon_spread_established_min": 30,
+    "confidence_cap_emerging": 0.72,
+    "confidence_cap_established": 0.95,
+    "confidence_cap_weakening": 0.55,
+    "asset_overrides": {}
+  },
   "mirofish": {
     "enabled": false,
     "phase": 1,
@@ -57,6 +70,43 @@
       "minimax_enabled": true,
       "openrouter_enabled": false,
       "timeout_seconds": 10.0
+    }
+  },
+  "agent_council": {
+    "decision_policy": "confirm_veto",
+    "provider_policy": "optional_abstain",
+    "roles": {
+      "entropy_gatekeeper": { "enabled": true, "required": true, "weight": 1.2, "timeout_ms": 1500, "source_id": "internal_mt5" },
+      "regime_trend": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
+      "structure_poi": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
+      "position_double_dip": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
+      "risk_session": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
+      "mirofish": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "mirofish", "provider": "mirofish" },
+      "openbb_provider": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "openbb", "provider": "openbb" },
+      "fusion_chair": { "enabled": true, "required": true, "weight": 1.1, "timeout_ms": 1500, "source_id": "internal_mt5" }
+    },
+    "sources": {
+      "internal_mt5": { "enabled": true, "required": true, "source_type": "internal", "status": "available", "influence_scope": "core", "prompt_profile_id": "demo_core_v1" },
+      "openbb": { "enabled": true, "required": false, "source_type": "openbb", "status": "missing", "influence_scope": "confirm_veto", "prompt_profile_id": "demo_core_v1" },
+      "mirofish": { "enabled": true, "required": false, "source_type": "mirofish", "status": "missing", "influence_scope": "soft_veto", "prompt_profile_id": "demo_core_v1" },
+      "llm_fallback": { "enabled": true, "required": false, "source_type": "llm", "status": "missing", "influence_scope": "confirm_veto", "prompt_profile_id": "demo_core_v1" }
+    },
+    "prompt_profiles": {
+      "demo_core_v1": {
+        "label": "Demo Core Prompt",
+        "version": "v1",
+        "system_prompt_template": "Use only redacted market context and return structured decision evidence.",
+        "opsec_checked": true
+      }
+    },
+    "asset_profiles": {
+      "crypto": { "asset_class": "crypto", "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" },
+      "metals": { "asset_class": "metals", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" },
+      "forex": { "asset_class": "forex", "enabled_sources": ["internal_mt5", "openbb"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" },
+      "indices": { "asset_class": "indices", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" }
+    },
+    "symbol_overrides": {
+      "BTCUSD": { "asset_profile_id": "crypto", "prompt_profile_id": "demo_core_v1" }
     }
   }
 }
