@@ -22,6 +22,19 @@
     "XAUUSD": { "max_spread_points": 40 },
     "USDJPY": { "enabled": false }
   },
+  "regime": {
+    "adx_emerging_min": 20,
+    "adx_established_min": 32,
+    "di_emerging_min": 3,
+    "di_established_min": 15,
+    "aroon_fresh_min": 70,
+    "aroon_opposite_max": 35,
+    "aroon_spread_established_min": 30,
+    "confidence_cap_emerging": 0.72,
+    "confidence_cap_established": 0.95,
+    "confidence_cap_weakening": 0.55,
+    "asset_overrides": {}
+  },
   "mirofish": {
     "enabled": false,
     "phase": 1,
