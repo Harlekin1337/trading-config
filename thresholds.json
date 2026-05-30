@@ -13,13 +13,52 @@
     "primary": "M5",
     "secondary": ["H1", "H4"]
   },
+  "radar": {
+    "watchlist": {
+      "symbols_csv": "BTCUSD,ETHUSD,XAUUSD,US30.cash,EURUSD"
+    },
+    "scan": {
+      "interval_seconds": 300
+    },
+    "entropy": {
+      "candidate_threshold": 0.80,
+      "watch_threshold": 0.45,
+      "exit_threshold": 0.35
+    }
+  },
+  "execution": {
+    "paper": {
+      "enabled": true,
+      "ledger_path": ".tmp/paper-ledger.jsonl",
+      "quantity": 1.0,
+      "stop_atr_multiple": 1.0
+    },
+    "demo": {
+      "enabled": false,
+      "symbol_allowlist": ["BTCUSD"],
+      "volume_lots": 0.01,
+      "stop_atr_multiple": 1.0,
+      "partial_close_r_multiple": 1.0,
+      "partial_close_fraction": 0.5,
+      "break_even_offset_points": 0.0,
+      "trailing_atr_multiple": 0.5,
+      "tight_trailing_atr_multiple": 0.25,
+      "magic": 260515,
+      "comment_prefix": "rickbrain-demo",
+      "max_bot_positions": 1,
+      "provider_policy": "optional_abstain"
+    }
+  },
   "global": {
     "max_spread_points": 25,
     "cooldown_hours": 4
   },
   "symbol_overrides": {
-    "BTCUSD": { "max_spread_points": 50, "cooldown_hours": 2 },
-    "XAUUSD": { "max_spread_points": 40 },
+    "BTCUSD": { "max_spread_points": 50, "cooldown_hours": 2, "enabled": true },
+    "ETHUSD": { "max_spread_points": 45, "cooldown_hours": 2, "enabled": true },
+    "XAUUSD": { "max_spread_points": 40, "cooldown_hours": 3, "enabled": true },
+    "US30.cash": { "max_spread_points": 45, "cooldown_hours": 2, "enabled": true },
+    "EURUSD": { "max_spread_points": 15, "cooldown_hours": 4, "enabled": true },
     "USDJPY": { "enabled": false }
   },
   "regime": {
@@ -33,11 +72,22 @@
     "confidence_cap_emerging": 0.72,
     "confidence_cap_established": 0.95,
     "confidence_cap_weakening": 0.55,
-    "asset_overrides": {}
+    "asset_overrides": {
+      "ETHUSD": { "confidence_cap_emerging": 0.68, "confidence_cap_established": 0.88 },
+      "XAUUSD": { "adx_emerging_min": 22, "confidence_cap_emerging": 0.70 },
+      "US30.cash": { "adx_emerging_min": 24, "di_emerging_min": 4, "confidence_cap_emerging": 0.68 },
+      "EURUSD": { "adx_emerging_min": 23, "confidence_cap_emerging": 0.66 }
+    }
   },
   "mirofish": {
     "enabled": false,
     "phase": 1,
+    "input": {
+      "symbols_csv": "BTCUSD,ETHUSD,XAUUSD,US30.cash,EURUSD",
+      "timeframe": "M5",
+      "required_fields_csv": "close_price,atr",
+      "stale_after_seconds": 300
+    },
     "assets": {
       "btc": true,
       "eth": true,
@@ -75,18 +125,74 @@
   "agent_council": {
     "decision_policy": "confirm_veto",
     "provider_policy": "optional_abstain",
+    "dev_trace_enabled": false,
     "roles": {
-      "entropy_gatekeeper": { "enabled": true, "required": true, "weight": 1.2, "timeout_ms": 1500, "source_id": "internal_mt5" },
-      "regime_trend": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
-      "structure_poi": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
-      "position_double_dip": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
-      "risk_session": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5" },
-      "mirofish": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "mirofish", "provider": "mirofish" },
-      "openbb_provider": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "openbb", "provider": "openbb" },
-      "fusion_chair": { "enabled": true, "required": true, "weight": 1.1, "timeout_ms": 1500, "source_id": "internal_mt5" }
+      "entropy_gatekeeper": { "enabled": true, "required": true, "weight": 1.2, "timeout_ms": 1500, "source_id": "internal_mt5", "influence_scope": "core" },
+      "regime_trend": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5", "influence_scope": "core" },
+      "structure_poi": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5", "influence_scope": "core" },
+      "position_double_dip": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5", "influence_scope": "core" },
+      "risk_session": { "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 1500, "source_id": "internal_mt5", "influence_scope": "core" },
+      "fusion_chair": { "enabled": true, "required": true, "weight": 1.1, "timeout_ms": 1500, "source_id": "internal_mt5", "influence_scope": "core" },
+      "entry_validator": {
+        "enabled": true,
+        "required": false,
+        "weight": 0.5,
+        "timeout_ms": 4500,
+        "source_id": "llm_fallback",
+        "provider": "openai",
+        "prompt_profile_id": "demo_core_v1",
+        "model_profile_id": "openai_shadow_v1",
+        "influence_scope": "shadow_advice",
+        "invoke_when": "core_candidate",
+        "subagents": {
+          "setup_scout": { "label": "Setup Scout", "enabled": true, "required": true, "weight": 0.9, "timeout_ms": 4500, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "provider": "openai", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "core_candidate" },
+          "risk_skeptic": { "label": "Risk Skeptic", "enabled": true, "required": false, "weight": 0.7, "timeout_ms": 4500, "prompt_profile_id": "demo_core_v1", "model_profile_id": "openai_shadow_v1", "provider": "openai", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "core_candidate" },
+          "execution_timing": { "label": "Execution Timing", "enabled": true, "required": false, "weight": 0.6, "timeout_ms": 6000, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "minimax_finance_v1", "provider": "minimax", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "core_candidate" },
+          "entry_judge": { "label": "Entry Judge", "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 4500, "prompt_profile_id": "demo_core_v1", "model_profile_id": "openai_shadow_v1", "provider": "openai", "judge": true, "influence_scope": "shadow_advice", "invoke_when": "core_candidate" }
+        }
+      },
+      "trade_manager": {
+        "enabled": true,
+        "required": false,
+        "weight": 0.5,
+        "timeout_ms": 4500,
+        "source_id": "llm_fallback",
+        "provider": "minimax",
+        "prompt_profile_id": "demo_core_v1",
+        "model_profile_id": "minimax_finance_v1",
+        "influence_scope": "shadow_advice",
+        "invoke_when": "position_manager",
+        "subagents": {
+          "trail_manager": { "label": "Trail Manager", "enabled": true, "required": true, "weight": 0.8, "timeout_ms": 6000, "prompt_profile_id": "manager_guard_v1", "model_profile_id": "minimax_finance_v1", "provider": "minimax", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "position_manager" },
+          "risk_sentinel": { "label": "Risk Sentinel", "enabled": true, "required": false, "weight": 0.8, "timeout_ms": 4500, "prompt_profile_id": "manager_guard_v1", "model_profile_id": "openai_shadow_v1", "provider": "openai", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "position_manager" },
+          "profit_protector": { "label": "Profit Protector", "enabled": true, "required": false, "weight": 0.7, "timeout_ms": 6000, "prompt_profile_id": "manager_guard_v1", "model_profile_id": "minimax_finance_v1", "provider": "minimax", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "position_manager" },
+          "manager_judge": { "label": "Manager Judge", "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 4500, "prompt_profile_id": "manager_guard_v1", "model_profile_id": "openai_shadow_v1", "provider": "openai", "judge": true, "influence_scope": "shadow_advice", "invoke_when": "position_manager" }
+        }
+      },
+      "exit_reviewer": {
+        "enabled": true,
+        "required": false,
+        "weight": 0.5,
+        "timeout_ms": 4500,
+        "source_id": "llm_fallback",
+        "provider": "openai",
+        "prompt_profile_id": "demo_core_v1",
+        "model_profile_id": "openai_shadow_v1",
+        "influence_scope": "shadow_advice",
+        "invoke_when": "exit_review",
+        "subagents": {
+          "invalidator": { "label": "Invalidator", "enabled": true, "required": true, "weight": 0.9, "timeout_ms": 4500, "prompt_profile_id": "exit_review_v1", "model_profile_id": "openai_shadow_v1", "provider": "openai", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "exit_review" },
+          "reversal_scout": { "label": "Reversal Scout", "enabled": true, "required": false, "weight": 0.7, "timeout_ms": 6000, "prompt_profile_id": "exit_review_v1", "model_profile_id": "minimax_finance_v1", "provider": "minimax", "judge": false, "influence_scope": "shadow_advice", "invoke_when": "exit_review" },
+          "exit_judge": { "label": "Exit Judge", "enabled": true, "required": true, "weight": 1.0, "timeout_ms": 4500, "prompt_profile_id": "exit_review_v1", "model_profile_id": "openai_shadow_v1", "provider": "openai", "judge": true, "influence_scope": "shadow_advice", "invoke_when": "exit_review" }
+        }
+      },
+      "macro_context": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "openbb", "provider": "openbb", "influence_scope": "confirm_veto", "invoke_when": "core_candidate" },
+      "mirofish_context": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "mirofish", "provider": "mirofish", "influence_scope": "soft_veto", "invoke_when": "core_candidate" },
+      "mirofish": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "mirofish", "provider": "mirofish", "influence_scope": "soft_veto" },
+      "openbb_provider": { "enabled": true, "required": false, "weight": 0.4, "timeout_ms": 2500, "source_id": "openbb", "provider": "openbb", "influence_scope": "confirm_veto" }
     },
     "sources": {
-      "internal_mt5": { "enabled": true, "required": true, "source_type": "internal", "status": "available", "influence_scope": "core", "prompt_profile_id": "demo_core_v1" },
+      "internal_mt5": { "enabled": true, "required": true, "source_type": "internal", "status": "available", "influence_scope": "core", "prompt_profile_id": null },
       "openbb": { "enabled": true, "required": false, "source_type": "openbb", "status": "missing", "influence_scope": "confirm_veto", "prompt_profile_id": "demo_core_v1" },
       "mirofish": { "enabled": true, "required": false, "source_type": "mirofish", "status": "missing", "influence_scope": "soft_veto", "prompt_profile_id": "demo_core_v1" },
       "llm_fallback": { "enabled": true, "required": false, "source_type": "llm", "status": "missing", "influence_scope": "confirm_veto", "prompt_profile_id": "demo_core_v1" }
@@ -97,16 +203,163 @@
         "version": "v1",
         "system_prompt_template": "Use only redacted market context and return structured decision evidence.",
         "opsec_checked": true
+      },
+      "entry_precision_v1": {
+        "label": "Entry Precision Prompt",
+        "version": "v1",
+        "system_prompt_template": "Use redacted thesis, core, regime and evidence context to assess entry quality. Return structured decision evidence only.",
+        "opsec_checked": true
+      },
+      "manager_guard_v1": {
+        "label": "Trade Manager Guard Prompt",
+        "version": "v1",
+        "system_prompt_template": "Use redacted open-position context to assess hold, trail, reduce or tighten actions. Return structured management evidence only.",
+        "opsec_checked": true
+      },
+      "exit_review_v1": {
+        "label": "Exit Review Prompt",
+        "version": "v1",
+        "system_prompt_template": "Use redacted thesis invalidation, reversal and risk context to assess exit quality. Return structured exit evidence only.",
+        "opsec_checked": true
+      }
+    },
+    "model_profiles": {
+      "openai_shadow_v1": {
+        "label": "OpenAI Shadow Reasoner",
+        "provider": "openai",
+        "model": "gpt-5.2",
+        "thinking_mode": "medium",
+        "reasoning_summary": "auto",
+        "max_tokens": 1200,
+        "timeout_ms": 4500,
+        "temperature": 0.1,
+        "cost_guard_eur": 0.25,
+        "shadow_only": true,
+        "response_schema": "agent_evidence_v1",
+        "reasoning_split": false
+      },
+      "minimax_finance_v1": {
+        "label": "MiniMax Finance Shadow",
+        "provider": "minimax",
+        "model": "M2.7",
+        "thinking_mode": "medium",
+        "reasoning_summary": "concise",
+        "max_tokens": 1600,
+        "timeout_ms": 6000,
+        "temperature": 0.1,
+        "cost_guard_eur": 0.25,
+        "shadow_only": true,
+        "response_schema": "agent_evidence_v1",
+        "reasoning_split": true
       }
     },
     "asset_profiles": {
-      "crypto": { "asset_class": "crypto", "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" },
-      "metals": { "asset_class": "metals", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" },
-      "forex": { "asset_class": "forex", "enabled_sources": ["internal_mt5", "openbb"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" },
-      "indices": { "asset_class": "indices", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5" }
+      "crypto": { "asset_class": "crypto", "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5", "role_overrides": {} },
+      "metals": { "asset_class": "metals", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5", "role_overrides": {} },
+      "forex": { "asset_class": "forex", "enabled_sources": ["internal_mt5", "openbb"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5", "role_overrides": {} },
+      "indices": { "asset_class": "indices", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5", "role_overrides": {} },
+      "commodities": { "asset_class": "commodities", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5", "role_overrides": {} },
+      "equities": { "asset_class": "equities", "enabled_sources": ["internal_mt5", "openbb"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5", "role_overrides": {} }
     },
     "symbol_overrides": {
-      "BTCUSD": { "asset_profile_id": "crypto", "prompt_profile_id": "demo_core_v1" }
+      "BTCUSD": { "asset_profile_id": "crypto", "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"], "prompt_profile_id": "entry_precision_v1", "timeframe": "M5", "role_overrides": {} },
+      "ETHUSD": { "asset_profile_id": "crypto", "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"], "prompt_profile_id": "entry_precision_v1", "timeframe": "M5", "role_overrides": {} },
+      "XAUUSD": { "asset_profile_id": "metals", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "entry_precision_v1", "timeframe": "M5", "role_overrides": {} },
+      "US30.cash": { "asset_profile_id": "indices", "enabled_sources": ["internal_mt5", "openbb", "mirofish"], "prompt_profile_id": "entry_precision_v1", "timeframe": "M5", "role_overrides": {} },
+      "EURUSD": { "asset_profile_id": "forex", "enabled_sources": ["internal_mt5", "openbb"], "prompt_profile_id": "demo_core_v1", "timeframe": "M5", "role_overrides": {} }
+    },
+    "asset_instances": {
+      "btcusd_core": {
+        "name": "BTC Core Trend",
+        "symbol": "BTCUSD",
+        "enabled": true,
+        "asset_profile_id": "crypto",
+        "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"],
+        "prompt_profile_id": "entry_precision_v1",
+        "timeframe": "M5",
+        "role_overrides": {
+          "entry_validator": { "enabled": true, "weight": 0.70, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
+          "trade_manager": { "enabled": true, "weight": 0.60, "model_profile_id": "minimax_finance_v1", "influence_scope": "shadow_advice" },
+          "exit_reviewer": { "enabled": true, "weight": 0.55, "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
+          "openbb_provider": { "enabled": true, "weight": 0.35, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "mirofish": { "enabled": true, "weight": 0.35, "source_id": "mirofish", "influence_scope": "soft_veto" }
+        }
+      },
+      "btcusd_pullback_lab": {
+        "name": "BTC Pullback Lab",
+        "symbol": "BTCUSD",
+        "enabled": false,
+        "asset_profile_id": "crypto",
+        "enabled_sources": ["internal_mt5", "mirofish", "llm_fallback"],
+        "prompt_profile_id": "entry_precision_v1",
+        "timeframe": "M15",
+        "role_overrides": {
+          "entry_validator": { "enabled": true, "weight": 0.90, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
+          "macro_context": { "enabled": false, "weight": 0.0, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "openbb_provider": { "enabled": false, "weight": 0.0, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "mirofish": { "enabled": true, "weight": 0.55, "source_id": "mirofish", "influence_scope": "soft_veto" }
+        }
+      },
+      "ethusd_momentum_scout": {
+        "name": "ETH Momentum Scout",
+        "symbol": "ETHUSD",
+        "enabled": true,
+        "asset_profile_id": "crypto",
+        "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"],
+        "prompt_profile_id": "entry_precision_v1",
+        "timeframe": "M5",
+        "role_overrides": {
+          "entropy_gatekeeper": { "weight": 1.25 },
+          "entry_validator": { "enabled": true, "weight": 0.65, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
+          "openbb_provider": { "enabled": true, "weight": 0.30, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "mirofish": { "enabled": true, "weight": 0.35, "source_id": "mirofish", "influence_scope": "soft_veto" }
+        }
+      },
+      "xauusd_macro_breakout": {
+        "name": "XAU Macro Breakout",
+        "symbol": "XAUUSD",
+        "enabled": true,
+        "asset_profile_id": "metals",
+        "enabled_sources": ["internal_mt5", "openbb", "mirofish"],
+        "prompt_profile_id": "entry_precision_v1",
+        "timeframe": "M5",
+        "role_overrides": {
+          "entry_validator": { "enabled": true, "weight": 0.55, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
+          "macro_context": { "enabled": true, "weight": 0.65, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "openbb_provider": { "enabled": true, "weight": 0.65, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "mirofish": { "enabled": true, "weight": 0.55, "source_id": "mirofish", "influence_scope": "soft_veto" }
+        }
+      },
+      "us30_news_momentum": {
+        "name": "US30 News Momentum",
+        "symbol": "US30.cash",
+        "enabled": true,
+        "asset_profile_id": "indices",
+        "enabled_sources": ["internal_mt5", "openbb", "mirofish"],
+        "prompt_profile_id": "entry_precision_v1",
+        "timeframe": "M5",
+        "role_overrides": {
+          "entropy_gatekeeper": { "weight": 1.30 },
+          "risk_session": { "weight": 1.20 },
+          "entry_validator": { "enabled": true, "weight": 0.60, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
+          "macro_context": { "enabled": true, "weight": 0.60, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "mirofish": { "enabled": true, "weight": 0.50, "source_id": "mirofish", "influence_scope": "soft_veto" }
+        }
+      },
+      "eurusd_london_macro": {
+        "name": "EURUSD London Macro",
+        "symbol": "EURUSD",
+        "enabled": true,
+        "asset_profile_id": "forex",
+        "enabled_sources": ["internal_mt5", "openbb"],
+        "prompt_profile_id": "demo_core_v1",
+        "timeframe": "M5",
+        "role_overrides": {
+          "entry_validator": { "enabled": true, "weight": 0.45, "prompt_profile_id": "demo_core_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
+          "openbb_provider": { "enabled": true, "weight": 0.45, "source_id": "openbb", "influence_scope": "confirm_veto" },
+          "mirofish": { "enabled": false, "weight": 0.0, "source_id": "mirofish", "influence_scope": "soft_veto" }
+        }
+      }
     }
   }
 }
