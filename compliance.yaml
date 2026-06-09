@@ -22,3 +22,5 @@ trading_schedule:
 autonomy:
   mode: "supervised"
   approval_timeout_sec: 120
+  change_draft: "auto_draft"
+  change_apply: "manual_only"
