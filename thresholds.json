@@ -36,7 +36,7 @@
     "demo": {
       "enabled": false,
       "short_enabled": true,
-      "symbol_allowlist": ["BTCUSD"],
+      "symbol_allowlist": ["BTCUSD", "ETHUSD", "XAUUSD", "US30.cash", "EURUSD"],
       "volume_lots": 0.01,
       "stop_atr_multiple": 1.0,
       "partial_close_r_multiple": 1.0,
