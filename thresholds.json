@@ -52,7 +52,9 @@
       "watchlist_execution_policy": {
         "stacking_allowed": false,
         "max_positions_per_symbol": 1,
-        "max_positions_per_asset_class": 2
+        "max_positions_per_asset_class": 2,
+        "max_planned_risk_total_pct": 0.02,
+        "max_planned_risk_per_symbol_pct": 0.01
       }
     }
   },
@@ -288,7 +290,7 @@
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
         "autonomy_policy": { "demo_entry": "auto_demo", "change_draft": "auto_draft", "change_apply": "manual_only" },
-        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2, "max_planned_risk_total_pct": 0.02, "max_planned_risk_per_symbol_pct": 0.01 },
         "role_overrides": {
           "entry_validator": { "enabled": true, "weight": 0.70, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
           "trade_manager": { "enabled": true, "weight": 0.60, "model_profile_id": "minimax_finance_v1", "influence_scope": "shadow_advice" },
@@ -321,7 +323,7 @@
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
         "autonomy_policy": { "demo_entry": "auto_demo", "change_draft": "auto_draft", "change_apply": "manual_only" },
-        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2, "max_planned_risk_total_pct": 0.02, "max_planned_risk_per_symbol_pct": 0.01 },
         "role_overrides": {
           "entropy_gatekeeper": { "weight": 1.25 },
           "entry_validator": { "enabled": true, "weight": 0.65, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
@@ -338,7 +340,7 @@
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
         "autonomy_policy": { "demo_entry": "auto_demo", "change_draft": "auto_draft", "change_apply": "manual_only" },
-        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2, "max_planned_risk_total_pct": 0.02, "max_planned_risk_per_symbol_pct": 0.01 },
         "role_overrides": {
           "entry_validator": { "enabled": true, "weight": 0.55, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
           "macro_context": { "enabled": true, "weight": 0.65, "source_id": "openbb", "influence_scope": "confirm_veto" },
@@ -355,7 +357,7 @@
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
         "autonomy_policy": { "demo_entry": "auto_demo", "change_draft": "auto_draft", "change_apply": "manual_only" },
-        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2, "max_planned_risk_total_pct": 0.02, "max_planned_risk_per_symbol_pct": 0.01 },
         "role_overrides": {
           "entropy_gatekeeper": { "weight": 1.30 },
           "risk_session": { "weight": 1.20 },
@@ -373,7 +375,7 @@
         "prompt_profile_id": "demo_core_v1",
         "timeframe": "M5",
         "autonomy_policy": { "demo_entry": "auto_demo", "change_draft": "auto_draft", "change_apply": "manual_only" },
-        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2, "max_planned_risk_total_pct": 0.02, "max_planned_risk_per_symbol_pct": 0.01 },
         "role_overrides": {
           "entry_validator": { "enabled": true, "weight": 0.45, "prompt_profile_id": "demo_core_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
           "openbb_provider": { "enabled": true, "weight": 0.45, "source_id": "openbb", "influence_scope": "confirm_veto" },
