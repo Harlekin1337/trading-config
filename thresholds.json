@@ -59,6 +59,8 @@
   "global": {
     "max_spread_points": 25,
     "spread_policy": "warn",
+    "require_broker_quote_for_stop": true,
+    "max_quote_age_seconds": 10,
     "cooldown_hours": 4
   },
   "symbol_overrides": {
