@@ -45,8 +45,14 @@
       "tight_trailing_atr_multiple": 0.25,
       "magic": 260515,
       "comment_prefix": "rickbrain-demo",
-      "max_bot_positions": 1,
-      "provider_policy": "optional_abstain"
+      "max_bot_positions": 5,
+      "provider_policy": "optional_abstain",
+      "watchlist_autonomy_policy": { "demo_entry": "auto_demo" },
+      "watchlist_execution_policy": {
+        "stacking_allowed": false,
+        "max_positions_per_symbol": 1,
+        "max_positions_per_asset_class": 2
+      }
     }
   },
   "global": {
@@ -277,6 +283,8 @@
         "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"],
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
+        "autonomy_policy": { "demo_entry": "auto_demo" },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
         "role_overrides": {
           "entry_validator": { "enabled": true, "weight": 0.70, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
           "trade_manager": { "enabled": true, "weight": 0.60, "model_profile_id": "minimax_finance_v1", "influence_scope": "shadow_advice" },
@@ -308,6 +316,8 @@
         "enabled_sources": ["internal_mt5", "openbb", "mirofish", "llm_fallback"],
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
+        "autonomy_policy": { "demo_entry": "auto_demo" },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
         "role_overrides": {
           "entropy_gatekeeper": { "weight": 1.25 },
           "entry_validator": { "enabled": true, "weight": 0.65, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
@@ -323,6 +333,8 @@
         "enabled_sources": ["internal_mt5", "openbb", "mirofish"],
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
+        "autonomy_policy": { "demo_entry": "auto_demo" },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
         "role_overrides": {
           "entry_validator": { "enabled": true, "weight": 0.55, "prompt_profile_id": "entry_precision_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
           "macro_context": { "enabled": true, "weight": 0.65, "source_id": "openbb", "influence_scope": "confirm_veto" },
@@ -338,6 +350,8 @@
         "enabled_sources": ["internal_mt5", "openbb", "mirofish"],
         "prompt_profile_id": "entry_precision_v1",
         "timeframe": "M5",
+        "autonomy_policy": { "demo_entry": "auto_demo" },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
         "role_overrides": {
           "entropy_gatekeeper": { "weight": 1.30 },
           "risk_session": { "weight": 1.20 },
@@ -354,6 +368,8 @@
         "enabled_sources": ["internal_mt5", "openbb"],
         "prompt_profile_id": "demo_core_v1",
         "timeframe": "M5",
+        "autonomy_policy": { "demo_entry": "auto_demo" },
+        "execution_policy": { "stacking_allowed": false, "max_positions_per_symbol": 1, "max_positions_per_asset_class": 2 },
         "role_overrides": {
           "entry_validator": { "enabled": true, "weight": 0.45, "prompt_profile_id": "demo_core_v1", "model_profile_id": "openai_shadow_v1", "influence_scope": "shadow_advice" },
           "openbb_provider": { "enabled": true, "weight": 0.45, "source_id": "openbb", "influence_scope": "confirm_veto" },
