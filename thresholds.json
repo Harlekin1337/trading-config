@@ -15,7 +15,7 @@
   },
   "radar": {
     "watchlist": {
-      "symbols_csv": "BTCUSD,ETHUSD,XAUUSD,US30.cash,EURUSD"
+      "symbols_csv": ""
     },
     "scan": {
       "interval_seconds": 300
